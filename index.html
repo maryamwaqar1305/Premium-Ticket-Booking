@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>✨ Premium Ticket Booking System</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+        :root {
+            /* Changed to a professional red-orange palette */
+            --gradient-primary: linear-gradient(135deg, #D1342A 0%, #EF4444 100%); /* red */
+            --gradient-secondary: linear-gradient(135deg, #F97316 0%, #FB923C 100%); /* orange */
+            --gradient-accent: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+            --gradient-warm: linear-gradient(135deg, #FB923C 0%, #F97316 100%);
+            --gradient-dark: linear-gradient(135deg, #1E293B 0%, #0F172A 100%);
+
+            --color-primary: #EF4444; /* red */
+            --color-primary-light: #F87171;
+            --color-secondary: #F97316; /* orange */
+            --color-accent: #FB923C;
+            --color-warm: #F97316;
+            --color-text-light: #F1F5F9;
+            --color-text-dark: #0F172A;
+
+            --glow-primary: 0 0 30px rgba(239, 68, 68, 0.25);
+            --glow-secondary: 0 0 30px rgba(249, 115, 22, 0.25);
+            --glow-accent: 0 0 30px rgba(251, 146, 60, 0.25);
+
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.3);
+            --shadow-xl: 0 25px 80px rgba(0, 0, 0, 0.4);
+        }
+
+        body.light-mode {
+            --gradient-dark: linear-gradient(135deg, #FFFFFF 0%, #F3F4F6 100%);
+            --color-text-light: #1F2937;
+            --color-text-dark: #FFFFFF;
+            --bg-primary: #F9FAFB;
+            --bg-secondary: #FFFFFF;
+            --card-border: rgba(239, 68, 68, 0.12);
+        }
+
+        body.dark-mode {
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --card-border: rgba(239,68,68,0.18);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(-45deg, #0F172A, #1E293B, #111827, #0F172A);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: var(--color-text-light);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 0.3s ease;
+        }
+
+        body.light-mode {
+            background: linear-gradient(-45deg, #F9FAFB, #F3F4F6, #FFFFFF, #F9FAFB);
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* particle animation (renamed to prevent duplicate keyframes) */
+        .particle { position: fixed; opacity: 0; pointer-events: none; }
+        .particle::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--color-primary), transparent);
+            border-radius: 50%;
+            animation: floatParticles 20s infinite ease-in-out;
+        }
+        @keyframes floatParticles {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+        }
+
+        /* ---------------------------
+           NAVBAR (only changed here)
+           --------------------------- */
+        /* ---------- NAVBAR: keep DARK MODE exactly as original; modify ONLY light-mode ---------- */
+
+/* Default (dark-mode) navbar — restored to original look (unchanged for dark-mode users) */
+.navbar {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(239,68,68,0.12);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(239,68,68,0.06);
+    transition: all 0.3s ease;
+    border-radius: 0 0 0 0; /* keep same radius as original; change only if you remember customizing it before */
+    overflow: visible;
+}
+
+/* IMPORTANT: only add the subtle red blur/glow for LIGHT MODE.
+   This ensures dark-mode remains exactly as before and is NOT affected. */
+body.light-mode .navbar {
+    background:#ef44440f; /* slightly translucent light background */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(239,65,65,0.10);
+    border-radius: 0 0 18px 18px; /* subtle rounded bottom in light mode only */
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06); /* much smaller, subtle shadow */
+}
+
+/* Subtle red blur behind navbar — APPLIED ONLY in light mode */
+body.light-mode .navbar::before {
+    content: "";
+    position: absolute;
+    left: 2%;
+    right: 2%;
+    top: -18%;
+    height: 140%;
+    z-index: -1;
+    border-radius: 22px;
+    pointer-events: none;
+
+    background:
+        radial-gradient(650px 160px at 10% 10%, rgba(239,68,68,0.16), transparent 18%),
+        radial-gradient(500px 140px at 90% 12%, rgba(249,115,22,0.06), transparent 20%),
+        linear-gradient(180deg, rgba(239,68,68,0.02), transparent 40%);
+
+    filter: blur(20px) saturate(1.02);
+}
+
+/* Ensure no global ::before from earlier code affects dark mode */
+.navbar::before { display: none; }
+
+/* small polish — keep toggle/button colors consistent in light mode */
+body.light-mode .mode-toggle {
+    color: var(--color-text-dark);
+    border-color: var(--color-primary);
+}
+
+
+        body.light-mode .navbar {
+            background:#ef44440f;
+            border-bottom: 1px solid rgba(239,68,68,0.08);
+        }
+
+        .navbar h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; align-items: center; }
+
+        .mode-toggle {
+            background: rgba(239,68,68,0.06);
+            border: 2px solid var(--color-primary);
+            color: var(--color-text-light);
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .mode-toggle:hover { background: var(--gradient-primary); transform: scale(1.05); }
+        body.light-mode .mode-toggle { color: var(--color-text-dark); border-color: var(--color-primary); }
+
+        .btn {
+            padding: 11px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary { background: var(--gradient-primary); color: white; box-shadow: var(--glow-primary); border: 2px solid transparent; }
+        .btn-primary:hover { transform: translateY(-3px) scale(1.05); box-shadow: var(--glow-primary), 0 20px 40px rgba(239,68,68,0.15); }
+
+        .btn-secondary {
+            background: rgba(249,115,22,0.08);
+            color: var(--color-secondary);
+            border: 2px solid var(--color-secondary);
+            backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover { background: var(--gradient-secondary); color: white; transform: translateY(-3px) scale(1.05); box-shadow: var(--glow-secondary); }
+
+        .btn-success { background: var(--gradient-accent); color: white; box-shadow: var(--glow-accent); }
+        .btn-success:hover { transform: translateY(-3px) scale(1.05); box-shadow: var(--glow-accent), 0 20px 40px rgba(251,146,60,0.15); }
+
+        .btn-danger { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; }
+        .btn-outline {
+            background: rgba(239,68,68,0.06);
+            border: 2px solid var(--color-primary);
+            color: var(--color-text-light);
+            backdrop-filter: blur(10px);
+        }
+        .btn-outline:hover { background: var(--gradient-primary); border-color: var(--color-primary); color: white; transform: translateY(-3px); box-shadow: var(--glow-primary); }
+        body.light-mode .btn-outline { color: var(--color-text-dark); background: rgba(239,68,68,0.03); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+        .view { display: none; animation: fadeIn 0.5s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .admin-section { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2rem; }
+        .form-card, .card {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(239,68,68,0.12);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        body.light-mode .form-card, body.light-mode .card { background: rgba(255,255,255,0.95); border-color: rgba(239,68,68,0.06); box-shadow: 0 8px 32px rgba(239,68,68,0.06); }
+
+        .form-card::before, .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            opacity: 0.04;
+            transition: all 0.5s ease;
+            z-index: 0;
+        }
+        .form-card > *, .card > * { position: relative; z-index: 1; }
+
+        .form-group { margin-bottom: 1.5rem; }
+        .form-label {
+            display: block; font-weight: 600; margin-bottom: 0.7rem; color: var(--color-text-light);
+            font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        body.light-mode .form-label {
+            color: #4B5563;
+        }
+
+        .form-input, .form-select {
+            width: 100%; padding: 12px 16px; border: 2px solid rgba(239,68,68,0.08);
+            border-radius: 12px; font-size: 14px; background: rgba(15, 23, 42, 0.4);
+            color: var(--color-text-light); transition: all 0.3s ease; font-family: 'Poppins', sans-serif;
+        }
+        body.light-mode .form-input, body.light-mode .form-select {
+            background: rgba(255,255,255,0.98);
+            color: #4B5563;
+            border-color: rgba(239,68,68,0.12);
+        }
+        .form-input::placeholder { color: rgba(241, 245, 249, 0.45); }
+        body.light-mode .form-input::placeholder {
+            color: #6B7280;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none; border-color: var(--color-primary); background: rgba(15, 23, 42, 0.7); box-shadow: 0 0 20px rgba(239,68,68,0.12);
+        }
+        body.light-mode .form-input:focus, body.light-mode .form-select:focus { background: rgba(239,68,68,0.03); }
+
+        .form-title {
+            font-size: 24px; font-weight: 700; margin-bottom: 1.5rem;
+            background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+
+        .image-preview { width: 100%; height: 180px; border-radius: 12px; object-fit: cover; margin-bottom: 1rem; border: 2px solid rgba(239,68,68,0.08); }
+        .file-input-label {
+            display: block; padding: 12px 16px; background: rgba(239,68,68,0.05);
+            border: 2px dashed rgba(239,68,68,0.08); border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s ease;
+            font-weight: 500; color: var(--color-text-light);
+        }
+        body.light-mode .file-input-label {
+            color: #4B5563;
+            background: rgba(0,0,0,0.03);
+            border-color: rgba(0,0,0,0.15);
+        }
+        .file-input-label:hover { background: rgba(239,68,68,0.08); border-color: var(--color-primary); }
+        #showImage { display: none; }
+
+        /* Shows Grid */
+        .shows-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .show-card {
+            background: rgba(30,41,59,0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0,0,0,0.12); /* thin visible border */
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            position: relative;
+        }
+        body.light-mode .show-card {
+            background: rgba(255,255,255,0.96);
+            border: 1px solid rgba(0,0,0,0.15);
+        }
+        body.light-mode .show-card { background: rgba(255,255,255,0.95); border-color: rgba(239,68,68,0.04); }
+        .show-poster { width: 100%; height: 200px; object-fit: cover; position: relative; }
+        .poster-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(239,68,68,0.18), rgba(249,115,22,0.12)); opacity: 0; transition: opacity 0.3s ease; }
+        .show-card:hover .poster-overlay { opacity: 1; }
+        .show-info { padding: 1.5rem; }
+        .show-name { font-size: 18px; font-weight: 700; margin-bottom: 0.8rem; background: var(--gradient-secondary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        body.light-mode .show-name { color: var(--color-text-dark); background: none; -webkit-text-fill-color: unset; }
+        .show-time { font-size: 13px; color: rgba(241,245,249,0.6); margin-bottom: 0.8rem; }
+        body.light-mode .show-time { color: rgba(15,23,42,0.6); }
+        .show-price { font-size: 16px; font-weight: 700; background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.8rem; }
+        .show-seats { font-size: 13px; color: rgba(241,245,249,0.6); margin-bottom: 1.2rem; display:flex; justify-content:space-between; }
+        body.light-mode .show-seats { color: rgba(15,23,42,0.6); }
+        .seats-available { color: #10B981; font-weight: 600; background: rgba(16,185,129,0.1); padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(16,185,129,0.3); }
+        .show-actions { display:flex; gap:0.8rem; }
+
+        /* Booking Layout */
+        .booking-layout { display: grid; grid-template-columns: 1fr 400px; gap: 2rem; margin-top: 2rem; }
+        .booking-seats-section { background: rgba(30,41,59,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(239,68,68,0.08); border-radius: 20px; padding: 2.5rem; }
+        body.light-mode .booking-seats-section { background: rgba(255,255,255,0.96); border-color: rgba(239,68,68,0.04); }
+        .booking-poster-section { position: sticky; top: 100px; height: fit-content; }
+        .booking-poster { width: 100%; height: 300px; object-fit: cover; border-radius: 15px; box-shadow: var(--glow-primary), 0 20px 50px rgba(0,0,0,0.3); margin-bottom: 1.5rem; }
+        .booking-details { background: rgba(30,41,59,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(239,68,68,0.08); border-radius: 15px; padding: 1.5rem; }
+
+        .detail-row { display:flex; justify-content:space-between; margin-bottom:0.8rem; font-size:13px; }
+        .detail-label { color: rgba(241,245,249,0.6); }
+        body.light-mode .detail-label { color: rgba(15,23,42,0.6); }
+        .detail-value { font-weight:600; color: var(--color-text-light); }
+        body.light-mode .detail-value { color: var(--color-text-dark); }
+
+        .price-section { border-top: 2px solid rgba(239,68,68,0.06); padding-top: 1rem; margin-top: 1rem; }
+        .total-price { display:flex; justify-content:space-between; align-items:center; font-size:18px; font-weight:700; background: var(--gradient-warm); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom:1.5rem; }
+        body.light-mode .total-price { color: #F97316; background: none; -webkit-text-fill-color: unset; }
+
+        /* Seat Section */
+        .seat-section { margin-bottom: 2.5rem; }
+        .section-title { font-size:20px; font-weight:700; margin-bottom:1.5rem; color: var(--color-text-light); }
+        body.light-mode .section-title { color: var(--color-text-dark); }
+
+        .seat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(45px, 1fr)); gap: 10px; max-width: 100%; margin-bottom: 2rem; }
+        .seat {
+            width: 100%; aspect-ratio: 1; border: 2px solid rgba(239,68,68,0.08); border-radius: 10px; cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:600;
+            background: rgba(15,23,42,0.5); position: relative;
+        }
+        body.light-mode .seat { background: rgba(239,68,68,0.03); }
+        .seat.available { border-color: #10B981; color: #10B981; }
+        .seat.available:hover { background: rgba(16,185,129,0.2); border-color: #10B981; transform: scale(1.15) translateY(-3px); box-shadow: 0 0 20px rgba(16,185,129,0.4); }
+        .seat.booked { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); color: #EF4444; cursor:not-allowed; }
+        .seat.selected { background: var(--gradient-primary); border-color: var(--color-primary); color: white; transform: scale(1.15) translateY(-3px); box-shadow: var(--glow-primary); }
+
+        .seat-legend { display:flex; gap:2rem; margin-bottom:1.5rem; flex-wrap:wrap; background: rgba(239,68,68,0.03); padding:1.5rem; border-radius:15px; border:1px solid rgba(239,68,68,0.06); }
+        body.light-mode .seat-legend { background: rgba(239,68,68,0.02); }
+        .legend-item { display:flex; align-items:center; gap:0.8rem; font-size:13px; }
+        .legend-box { width:24px; height:24px; border-radius:6px; border: 2px solid; }
+        .legend-box.available { border-color: #10B981; }
+        .legend-box.booked { background: rgba(239,68,68,0.12); border-color: #EF4444; }
+        .legend-box.selected { background: var(--gradient-primary); border-color: var(--color-primary); }
+
+        .selected-seats { background: linear-gradient(135deg, rgba(239,68,68,0.05), rgba(249,115,22,0.03)); padding:1.5rem; border-radius:15px; margin-bottom:1.5rem; border:2px dashed rgba(239,68,68,0.06); transition: all 0.3s ease; }
+        body.light-mode .selected-seats { background: rgba(239,68,68,0.03); }
+        .selected-seats.active { border-color: var(--color-primary); }
+        .selected-seats-label { font-weight:600; margin-bottom:1rem; color: var(--color-text-light); font-size:13px; text-transform:uppercase; letter-spacing:0.5px; }
+        body.light-mode .selected-seats-label { color: var(--color-text-dark); }
+        .selected-seats-list { display:flex; flex-wrap:wrap; gap:0.8rem; }
+        .seat-tag { background: var(--gradient-secondary); color: white; padding:8px 14px; border-radius:20px; font-size:12px; display:flex; align-items:center; gap:6px; font-weight:600; box-shadow: var(--glow-secondary); animation: slideIn 0.3s ease; }
+        @keyframes slideIn { from { opacity:0; transform: translateX(-10px); } to { opacity:1; transform: translateX(0); } }
+        .seat-tag-remove { cursor:pointer; font-weight:bold; margin-left:4px; opacity:0.8; transition: opacity 0.2s ease; }
+        .seat-tag-remove:hover { opacity: 1; }
+
+        /* Alerts */
+        .alert { padding:1.2rem; border-radius:12px; margin-bottom:1.5rem; display:flex; align-items:center; gap:12px; border:2px solid; backdrop-filter: blur(10px); animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+        .alert-success { background: rgba(16,185,129,0.1); color: #10B981; border-color: rgba(16,185,129,0.3); }
+        .alert-error { background: rgba(239,68,68,0.08); color: #EF4444; border-color: rgba(239,68,68,0.2); }
+        .alert-info { background: rgba(239,68,68,0.06); color: var(--color-primary); border-color: rgba(239,68,68,0.12); }
+
+        /* Ticket Modal */
+        .ticket-modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index:1000; justify-content:center; align-items:center; padding:2rem; }
+        .ticket-modal.show { display:flex; }
+        .ticket-container { background: white; border-radius:20px; padding:2rem; max-width:600px; width:100%; box-shadow: 0 25px 80px rgba(0,0,0,0.4); position: relative; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity:1; } }
+
+        .ticket-header { text-align:center; margin-bottom:2rem; border-bottom:3px dashed #E5E7EB; padding-bottom:1.5rem; }
+        .ticket-title { font-size:28px; font-weight:800; color: #1F2937; margin-bottom:0.5rem; }
+        .ticket-subtitle { font-size:14px; color:#6B7280; }
+        .ticket-content { margin-bottom:2rem; }
+        .ticket-row { display:flex; justify-content:space-between; padding:1rem 0; border-bottom:1px solid #E5E7EB; color: #1F2937; }
+        .ticket-row:last-child { border-bottom: none; }
+        .ticket-label { font-weight:500; color:#6B7280; }
+        .ticket-value { font-weight:700; color:#1F2937; }
+
+        .ticket-seats { background: linear-gradient(135deg, #D1342A 0%, #EF4444 100%); color:white; padding:1rem; border-radius:10px; text-align:center; margin:1rem 0; }
+        .ticket-seats-list { font-size:18px; font-weight:700; }
+        .ticket-price { background: linear-gradient(135deg, #F97316 0%, #FBBF24 100%); color:white; padding:1.5rem; border-radius:10px; text-align:center; margin-bottom:1.5rem; }
+        .ticket-total { font-size:24px; font-weight:800; }
+        .ticket-id { background:#F3F4F6; padding:1rem; border-radius:10px; text-align:center; margin-bottom:1.5rem; border:2px dashed #D1D5DB; }
+        .ticket-id-label { font-size:12px; color:#6B7280; text-transform:uppercase; }
+        .ticket-id-value { font-size:16px; font-weight:700; color:#1F2937; font-family: monospace; }
+        .ticket-qr { text-align:center; margin:1.5rem 0; }
+        .ticket-qr-placeholder { width:150px; height:150px; background:#F3F4F6; border-radius:10px; display:flex; align-items:center; justify-content:center; margin:0 auto; font-size:48px; }
+        .ticket-buttons { display:flex; gap:1rem; margin-top:2rem; }
+        .ticket-buttons .btn { flex:1; }
+
+        /* Loading / Empty */
+        .loading { text-align:center; padding:3rem; color: rgba(241,245,249,0.6); }
+        .loading::after { content:''; display:inline-block; width:24px; height:24px; margin-left:12px; border:3px solid rgba(239,68,68,0.12); border-top-color: var(--color-primary); border-radius:50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .empty-state { text-align:center; padding:3rem; background: rgba(239,68,68,0.03); border:2px dashed rgba(239,68,68,0.06); border-radius:15px; color: rgba(241,245,249,0.6); }
+        .empty-state-icon { font-size:54px; margin-bottom:1rem; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        /* Status Badge and Table */
+        .status-badge { display:inline-block; padding:8px 16px; border-radius:20px; font-size:12px; font-weight:700; text-transform:uppercase; }
+        .status-confirmed { background: rgba(16,185,129,0.15); color:#10B981; border:1px solid rgba(16,185,129,0.3); }
+
+        .table { width:100%; border-collapse: collapse; margin-top:1rem; }
+        .table th, .table td { padding:1.2rem; text-align:left; border-bottom: 1px solid rgba(239,68,68,0.06); }
+        .table th { background: rgba(239,68,68,0.04); font-weight:700; color: var(--color-text-light); text-transform: uppercase; font-size:12px; }
+        body.light-mode .table th { background: rgba(239,68,68,0.02); color: var(--color-text-dark); }
+        .table tbody tr { transition: all 0.3s ease; }
+        .table tbody tr:hover { background: rgba(239,68,68,0.03); border-left: 3px solid var(--color-primary); }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .booking-layout { grid-template-columns: 1fr; }
+            .booking-poster-section { position: static; }
+            .booking-poster { height: 250px; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem; }
+            .admin-section { grid-template-columns: 1fr; }
+            .navbar { flex-direction: column; gap: 1rem; }
+            .navbar h1 { font-size: 22px; }
+            .shows-grid { grid-template-columns: 1fr; }
+            .seat-grid { grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); }
+            .ticket-container { padding: 1.5rem; }
+        }
+        /* === Force navbar blur ONLY for light mode, and keep dark-mode untouched === */
+
+/* Neutralize any stray global navbar before (safe default) */
+.navbar::before { display: none !important; }
+
+/* Keep original dark-mode navbar exactly as before (no changes) */
+.navbar {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(239,68,68,0.12);
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 8px 32px rgba(239,68,68,0.06);
+  transition: all 0.3s ease;
+  border-radius: 0; /* restore original dark-mode radius */
+  overflow: visible;
+}
+
+/* Light-mode navbar style (applies only when body.light-mode is present) */
+body.light-mode .navbar {
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(239,65,65,0.10);
+  border-radius: 0 0 18px 18px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06); /* subtle */
+}
+
+/* --- THE RED BLUR / GLOW (ONLY FOR LIGHT MODE) --- */
+/* Use !important so this shows even if older rules exist; placing at end of file is best. */
+body.light-mode .navbar::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: -22%;
+  height: 160%;
+  z-index: -1;
+  border-radius: 20px;
+  pointer-events: none;
+
+  /* subtle, professional red glow */
+  background:
+    radial-gradient(700px 160px at 12% 12%, rgba(239,68,68,0.18), transparent 18%),
+    radial-gradient(520px 140px at 88% 12%, rgba(249,115,22,0.06), transparent 20%),
+    linear-gradient(180deg, rgba(239,68,68,0.02), transparent 40%);
+
+  filter: blur(20px) saturate(1.02);
+  -webkit-filter: blur(20px) saturate(1.02);
+}
+
+/* keep the light-mode toggle/button color consistent */
+body.light-mode .mode-toggle {
+  color: var(--color-text-dark);
+  border-color: var(--color-primary);
+}
+/* === Force-visible light-mode red blur behind navbar (place LAST in your <style>) === */
+/* Keeps dark mode unchanged. */
+
+body.light-mode nav.navbar {
+  position: relative !important;   /* ensure pseudo is positioned relative to navbar */
+  z-index: 1000 !important;        /* keep navbar above page content */
+  overflow: visible !important;    /* ensure blur can extend outside */
+}
+
+/* Strong, specific rule so earlier "display:none" won't block it */
+body.light-mode nav.navbar::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 2% !important;
+  right: 2% !important;
+  top: -20% !important;
+  height: 160% !important;
+  z-index: -1 !important;          /* behind the navbar but above page background */
+  border-radius: 18px !important;
+  pointer-events: none !important;
+
+  /* Visible but subtle red glow — increase alpha if you want stronger color */
+  background:
+    radial-gradient(700px 160px at 12% 12%, rgba(239,68,68,0.22), transparent 18%),
+    radial-gradient(520px 140px at 88% 12%, rgba(249,115,22,0.06), transparent 20%),
+    linear-gradient(180deg, rgba(239,68,68,0.02), transparent 40%) !important;
+
+  /* Blur strength — increase or decrease as you prefer */
+  filter: blur(20px) saturate(1.04) !important;
+  -webkit-filter: blur(20px) saturate(1.04) !important;
+  opacity: 1 !important;
+}
+/* -------------------------
+   FORCE VISIBLE RED GLOW (light-mode only)
+   Paste this AT THE VERY END of your <style> and hard-refresh.
+   Keeps dark-mode untouched.
+   ------------------------- */
+
+body.light-mode { position: relative !important; }
+
+/* big fixed glow area (behind navbar, above page background) */
+body.light-mode::before {
+  content: "" !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 140px !important;          /* height of glow band - adjust if navbar taller */
+  z-index: 999 !important;           /* behind navbar (navbar should be 1000+) */
+  pointer-events: none !important;
+  border-bottom-left-radius: 18px !important;
+  border-bottom-right-radius: 18px !important;
+
+  /* strong visible red band composed of radial & linear blends */
+  background:
+    radial-gradient(900px 220px at 10% 10%, rgba(239,68,68,0.26), transparent 18%) ,
+    radial-gradient(700px 180px at 90% 12%, rgba(239,68,68,0.12), transparent 22%),
+    linear-gradient(180deg, rgba(239,68,68,0.04), rgba(255,255,255,0) 60%) !important;
+
+  /* make it glow/soft */
+  filter: blur(20px) saturate(1.08) !important;
+  -webkit-filter: blur(20px) saturate(1.08) !important;
+  opacity: 1 !important;
+}
+
+/* ensure navbar sits above the glow and keeps its original dark-mode look */
+.navbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important; /* must be above body::before (999) */
+  overflow: visible !important;
+}
+
+/* Light mode: keep navbar slightly translucent so glow shows through */
+body.light-mode .navbar {
+  background: rgba(255,255,255,0.78) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border-bottom: 1px solid rgba(239,65,65,0.08) !important;
+}
+
+/* Safety: do not affect dark mode (no rules prefixed with body.dark-mode) */
+
+/* Optional: if you want stronger color, increase first rgba alpha (0.26 -> 0.36) */
+/* -------------------------
+  Make theme toggle an emoji-only button
+  No border / no background — only tiny zoom on hover
+  Paste this at the very end of your <style>
+  ------------------------- */
+
+.mode-toggle {
+  /* remove visuals */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+
+  /* emoji-centric sizing */
+  width: 44px !important;
+  height: 44px !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  border-radius: 50% !important;
+
+  /* subtle interaction */
+  cursor: pointer !important;
+  transition: transform 160ms ease, opacity 160ms ease !important;
+
+  /* remove focus outline (we still keep accessibility via :focus-visible below) */
+  outline: none !important;
+}
+
+/* keep keyboard accessibility visible but unobtrusive */
+.mode-toggle:focus-visible {
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.12) !important;
+}
+
+/* hover / active — only scale (no color, no bg, no shadow) */
+.mode-toggle:hover,
+.mode-toggle:active {
+  transform: scale(1.12) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* explicitly remove any light-mode specific border/background previously set */
+body.light-mode .mode-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: inherit !important;
+  box-shadow: none !important;
+}
+
+/* make sure any .mode-toggle::before / ::after from earlier rules don't show */
+.mode-toggle::before, .mode-toggle::after {
+  display: none !important;
+}
+
+    </style>
+</head>
+<body class="dark-mode">
+    <div id="app">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <h1>🎟️Premium Ticket Booking</h1>
+            <div class="navbar-buttons">
+                <button class="btn btn-secondary" onclick="switchView('user')">👤 User Portal</button>
+                <button class="btn btn-secondary" onclick="switchView('admin')">⚙️ Admin</button>
+                <button id="modeToggleBtn" class="mode-toggle" onclick="toggleTheme()">🌙</button>
+            </div>
+        </nav>
+
+        <!-- Admin View -->
+        <div id="admin-view" class="view active">
+            <div class="container">
+                <h2 style="font-size: 28px; margin-bottom: 2rem; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    Admin Dashboard
+                </h2>
+
+                <div class="admin-section">
+                    <!-- Create Show Form -->
+                    <div class="form-card">
+                        <div class="form-title">📽️Create New Show/Ride</div>
+
+                        <div class="form-group">
+                            <label class="form-label">Show Name</label>
+                            <input type="text" id="showName" class="form-input" placeholder="e.g., Avatar 3">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Show Type</label>
+                            <select id="showType" class="form-select">
+                                <option value="">Select Type</option>
+                                <option value="movie">🎬 Movie</option>
+                                <option value="bus">🚌 Bus Trip</option>
+                                <option value="doctor">👨‍⚕️ Doctor Appointment</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Date & Time</label>
+                            <input type="datetime-local" id="showTime" class="form-input">
+                        </div>
+
+                        <div class="form-group" id="seatsGroup" style="display:none;">
+                            <label class="form-label">Total Seats</label>
+                            <input type="number" id="totalSeats" class="form-input" placeholder="e.g., 50" min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Price Per Seat</label>
+                            <input type="number" id="showPrice" class="form-input" placeholder="e.g., 299" min="1" step="0.01">
+                        </div>
+
+                        <!-- Additional conditional fields -->
+                        <div class="form-group" id="posterGroup" style="display:none;">
+                            <label class="form-label">Poster Image (Movies Only)</label>
+                            <label class="file-input-label" for="showImage">
+                                📸 Click to Upload Image
+                            </label>
+                            <input type="file" id="showImage" accept="image/*">
+                            <img id="imagePreview" class="image-preview" style="display:none;">
+                        </div>
+
+                        <div class="form-group" id="doctorNameGroup" style="display:none;">
+                            <label class="form-label">Doctor's Name</label>
+                            <input type="text" id="doctorName" class="form-input" placeholder="e.g., Dr. A. Sharma">
+                        </div>
+
+                        <div class="form-group" id="busRouteGroup" style="display:none;">
+                            <label class="form-label">Bus Route / Details</label>
+                            <input type="text" id="busRoute" class="form-input" placeholder="e.g., Delhi → Agra via NH19">
+                        </div>
+
+                        <button id="createBtn" class="btn btn-primary" onclick="createShow()" style="width: 100%;">
+                            ✚ Create Show
+                        </button>
+                    </div>
+
+                    <!-- Shows List -->
+                    <div class="form-card">
+                        <div class="form-title">📊 All Shows</div>
+                        <div id="adminShowsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User View -->
+        <div id="user-view" class="view">
+            <div class="container">
+                <h2 style="font-size: 28px; margin-bottom: 2rem; background: var(--gradient-secondary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    🎫 Available Shows/rides
+                </h2>
+                <div id="userShowsList"></div>
+            </div>
+        </div>
+
+        <!-- Booking View -->
+        <div id="booking-view" class="view">
+            <div class="container">
+                <div style="margin-bottom: 2rem;">
+                    <button class="btn btn-outline" onclick="backToUserView()">← Back to Shows</button>
+                </div>
+                <div class="booking-layout">
+                    <div class="booking-seats-section">
+                        <div id="bookingContent"></div>
+                    </div>
+                    <div class="booking-poster-section" id="posterSection"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ticket Modal -->
+        <div id="ticketModal" class="ticket-modal">
+            <div class="ticket-container">
+                <button class="btn btn-outline" style="position: absolute; top: 1.5rem; right: 1.5rem;" onclick="closeTicket()">✕</button>
+                <div id="ticketContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // On load we intentionally clear previous stored shows/bookings so admin must create fresh shows
+        localStorage.removeItem('shows');
+        localStorage.removeItem('bookings');
+        localStorage.removeItem('nextShowId');
+
+        // State Management (start fresh every open as requested)
+        const state = {
+            currentView: 'admin',
+            shows: [], // do NOT load previous shows
+            bookings: [],
+            nextId: 1,
+            theme: localStorage.getItem('theme') || 'dark-mode'
+        };
+
+        // Initialize theme
+        document.body.className = state.theme;
+        const modeToggleBtn = document.getElementById('modeToggleBtn');
+        if (state.theme === 'dark-mode') modeToggleBtn.textContent = '🌙';
+        else modeToggleBtn.textContent = '☀️';
+
+        // Theme Toggle
+        function toggleTheme() {
+            const isDark = document.body.classList.contains('dark-mode');
+            if (isDark) {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                state.theme = 'light-mode';
+                modeToggleBtn.textContent = '☀️';
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                state.theme = 'dark-mode';
+                modeToggleBtn.textContent = '🌙';
+            }
+            localStorage.setItem('theme', state.theme);
+        }
+
+        // Keep poster data here
+        let posterImageData = '';
+
+        // Image Preview
+        document.getElementById('showImage')?.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    posterImageData = event.target.result;
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = posterImageData;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Cache create button
+        const createBtn = document.getElementById('createBtn');
+
+        // Show Type Change Handler
+        document.getElementById('showType')?.addEventListener('change', (e) => {
+            const seatsGroup = document.getElementById('seatsGroup');
+            const posterGroup = document.getElementById('posterGroup');
+            const doctorGroup = document.getElementById('doctorNameGroup');
+            const busGroup = document.getElementById('busRouteGroup');
+
+            const val = e.target.value;
+            if (val === 'doctor') {
+                seatsGroup.style.display = 'none';
+                posterGroup.style.display = 'none';
+                doctorGroup.style.display = 'block';
+                busGroup.style.display = 'none';
+                // change button label
+                if (createBtn) createBtn.innerHTML = '✚ Create Appointment';
+            } else if (val === 'movie') {
+                seatsGroup.style.display = 'block';
+                posterGroup.style.display = 'block';
+                doctorGroup.style.display = 'none';
+                busGroup.style.display = 'none';
+                if (createBtn) createBtn.innerHTML = '✚ Create Show';
+            } else if (val === 'bus') {
+                seatsGroup.style.display = 'block';
+                posterGroup.style.display = 'none';
+                doctorGroup.style.display = 'none';
+                busGroup.style.display = 'block';
+                if (createBtn) createBtn.innerHTML = '✚ Create Bus Ride';
+            } else {
+                seatsGroup.style.display = 'none';
+                posterGroup.style.display = 'none';
+                doctorGroup.style.display = 'none';
+                busGroup.style.display = 'none';
+                if (createBtn) createBtn.innerHTML = '✚ Create Show';
+            }
+        });
+
+        // Create Show
+        function createShow() {
+            const name = document.getElementById('showName').value.trim();
+            const type = document.getElementById('showType').value;
+            const time = document.getElementById('showTime').value;
+            const priceInput = document.getElementById('showPrice').value;
+            const seatsInput = document.getElementById('totalSeats').value;
+            const doctorName = document.getElementById('doctorName')?.value.trim() || '';
+            const busRoute = document.getElementById('busRoute')?.value.trim() || '';
+
+            // Validation
+            if (!name) { alert('⚠️ Please enter a show name'); return; }
+            if (!type) { alert('⚠️ Please select a show type'); return; }
+            if (!time) { alert('⚠️ Please select date and time'); return; }
+            if (!priceInput) { alert('⚠️ Please enter a price'); return; }
+
+            const price = parseFloat(priceInput);
+            if (isNaN(price) || price <= 0) { alert('⚠️ Price must be greater than 0'); return; }
+
+            if (type !== 'doctor') {
+                if (!seatsInput) { alert('⚠️ Please enter number of seats'); return; }
+                const seatsTest = parseInt(seatsInput);
+                if (isNaN(seatsTest) || seatsTest < 1) { alert('⚠️ Seats must be at least 1'); return; }
+            }
+
+            if (type === 'doctor' && !doctorName) { alert('⚠️ Please enter the doctor\'s name'); return; }
+            if (type === 'bus' && !busRoute) { alert('⚠️ Please enter bus route/details'); return; }
+
+            const seats = type === 'doctor' ? 1 : parseInt(seatsInput);
+
+            const newShow = {
+                id: state.nextId++,
+                name,
+                type,
+                time,
+                price,
+                totalSeats: seats,
+                availableSeats: seats,
+                poster: posterImageData || '',
+                seats: Array.from({ length: seats }, (_, i) => ({ id: i + 1, status: 'available' })),
+                doctorName: type === 'doctor' ? doctorName : '',
+                busRoute: type === 'bus' ? busRoute : '',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                state.shows.push(newShow);
+                saveState();
+
+                // Clear form
+                document.getElementById('showName').value = '';
+                document.getElementById('showType').value = '';
+                document.getElementById('showTime').value = '';
+                document.getElementById('totalSeats').value = '';
+                document.getElementById('showPrice').value = '';
+                const preview = document.getElementById('imagePreview');
+                if (preview) { preview.style.display = 'none'; preview.src = ''; }
+                const fileInput = document.getElementById('showImage');
+                if (fileInput) fileInput.value = '';
+                posterImageData = '';
+                document.getElementById('posterGroup').style.display = 'none';
+                document.getElementById('seatsGroup').style.display = 'none';
+                document.getElementById('doctorNameGroup').style.display = 'none';
+                document.getElementById('busRouteGroup').style.display = 'none';
+
+                // reset create button label to default
+                if (createBtn) createBtn.innerHTML = '✚ Create Show';
+
+                renderAdminShows();
+                renderUserShows();
+
+                alert('✅ Show created successfully! ID: ' + newShow.id);
+            } catch (error) {
+                alert('❌ Error creating show: ' + (error.message || error));
+                console.error('Create show error:', error);
+            }
+        }
+
+        // Delete Show
+        function deleteShow(showId) {
+            if (!confirm('🗑️ Are you sure you want to delete this show?')) return;
+            state.shows = state.shows.filter(s => s.id !== showId);
+            // remove bookings related to deleted show (optional)
+            state.bookings = state.bookings.filter(b => b.showId !== showId);
+            saveState();
+            renderAdminShows();
+            renderUserShows();
+        }
+
+        // Render Admin Shows
+        function renderAdminShows() {
+            const container = document.getElementById('adminShowsList');
+            if (!container) return;
+            if (state.shows.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><p>No shows created yet</p></div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Show Name</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Seats</th>
+                            <th>Extra</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${state.shows.map(show => `
+                            <tr>
+                                <td><strong>${escapeHtml(show.name)}</strong></td>
+                                <td>${escapeHtml(show.type)}</td>
+                                <td>₹${Number(show.price).toFixed(2)}</td>
+                                <td><span class="status-confirmed">${show.availableSeats}/${show.totalSeats}</span></td>
+                                <td>${show.type === 'doctor' ? escapeHtml(show.doctorName) : show.type === 'bus' ? escapeHtml(show.busRoute) : '—'}</td>
+                                <td>
+                                    <button class="btn btn-danger" style="font-size: 12px; padding: 6px 12px;" onclick="deleteShow(${show.id})">Delete</button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        // Render User Shows (UPDATED to show different icons depending on type)
+        function renderUserShows() {
+            const container = document.getElementById('userShowsList');
+            if (!container) return;
+            if (state.shows.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🎬</div><p>No shows available</p></div>';
+                return;
+            }
+
+            container.innerHTML = `<div class="shows-grid">
+                ${state.shows.map(show => {
+                    // choose fallback icon depending on type
+                    const fallbackIcon = show.type === 'bus' ? '🚌' : show.type === 'doctor' ? '👨‍⚕️' : '🎬';
+                    return `
+                    <div class="show-card" role="button" tabindex="0">
+                        ${show.poster ? `<img src="${show.poster}" class="show-poster"><div class="poster-overlay"></div>` : `
+                            <div class="show-poster" style="
+                                background: var(--gradient-primary); 
+                                display:flex; 
+                                align-items:center; 
+                                justify-content:center; 
+                                font-size:60px;
+                            ">
+                                ${fallbackIcon}
+                            </div>
+                        `}
+                        <div class="show-info">
+                            <div class="show-name">${escapeHtml(show.name)}</div>
+                            <div class="show-time">📅 ${new Date(show.time).toLocaleString()}</div>
+                            <div class="show-price">${Number(show.price) ? `₹${Number(show.price).toFixed(2)} per seat` : '₹NaN per seat'}</div>
+                            <div class="show-seats">
+                                <span class="seats-available">✓ ${show.availableSeats} Available</span>
+                            </div>
+                            <div style="font-size:13px; color: rgba(241,245,249,0.6); margin-bottom:8px;">${show.type === 'doctor' ? 'Doctor: ' + escapeHtml(show.doctorName) : show.type === 'bus' ? 'Route: ' + escapeHtml(show.busRoute) : ''}</div>
+                            <div class="show-actions">
+                                <button class="btn btn-primary" style="flex: 1;" onclick="goToBooking(${show.id})" ${show.availableSeats === 0 ? 'disabled' : ''}>Book Now</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }).join('')}
+            </div>`;
+        }
+
+        // Go to Booking
+        function goToBooking(showId) {
+            window.currentShowId = showId;
+            const show = state.shows.find(s => s.id === showId);
+            if (!show) return;
+
+            const bookingContent = document.getElementById('bookingContent');
+            const posterSection = document.getElementById('posterSection');
+
+            if (show.type === 'doctor') {
+                bookingContent.innerHTML = `
+                    <div class="seat-section">
+                        <div class="section-title">🩺 Doctor Appointment</div>
+                        <div class="alert alert-info">This is a doctor appointment. Fill patient details below before confirming.</div>
+                        <div class="form-group">
+                            <label class="form-label">Patient Name</label>
+                            <input type="text" id="patientName" class="form-input" placeholder="e.g., John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="text" id="patientContact" class="form-input" placeholder="e.g., +91-9876543210">
+                        </div>
+                    </div>
+                    <button class="btn btn-success" style="width: 100%; margin-bottom: 1rem;" onclick="confirmBooking(${show.id})">✓ Confirm Appointment</button>
+                    <button class="btn btn-outline" style="width:100%;" onclick="backToUserView()">Cancel</button>
+                `;
+            } else {
+                // build seat grid dynamically (reflecting latest seat statuses)
+                const seatsHtml = `
+                    <div class="seat-legend">
+                        <div class="legend-item"><div class="legend-box available"></div><span>Available</span></div>
+                        <div class="legend-item"><div class="legend-box booked"></div><span>Booked</span></div>
+                        <div class="legend-item"><div class="legend-box selected"></div><span>Selected</span></div>
+                    </div>
+                    <div class="seat-grid" id="seatGrid">
+                        ${show.seats.map(seat => `
+                            <div class="seat ${seat.status === 'available' ? 'available' : 'booked'}"
+                                 data-seat-id="${seat.id}"
+                                 onclick="toggleSeat(event, ${seat.id})">
+                                ${seat.id}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="selected-seats" id="selectedSeatsContainer" style="display:none;">
+                        <div class="selected-seats-label">Selected Seats:</div>
+                        <div class="selected-seats-list" id="selectedSeatsList"></div>
+                    </div>
+                `;
+
+                bookingContent.innerHTML = `
+                    <div class="seat-section">
+                        <div class="section-title">🎫 Select Seats</div>
+                        ${seatsHtml}
+                    </div>
+                    <button class="btn btn-success" style="width: 100%; margin-bottom: 1rem;" onclick="confirmBooking(${show.id})">✓ Confirm Booking</button>
+                    <button class="btn btn-outline" style="width: 100%;" onclick="backToUserView()">Cancel</button>
+                `;
+            }
+
+            posterSection.innerHTML = `
+                ${show.poster ? `<img src="${show.poster}" class="booking-poster">` : `<div class="booking-poster" style="background: var(--gradient-primary); display:flex; align-items:center; justify-content:center; font-size:80px;">${show.type === 'bus' ? '🚌' : show.type === 'doctor' ? '👨‍⚕️' : '🎬'}</div>`}
+                <div class="booking-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Show Name</span>
+                        <span class="detail-value">${escapeHtml(show.name)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date & Time</span>
+                        <span class="detail-value">${new Date(show.time).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Available</span>
+                        <span class="detail-value">${show.availableSeats} seats</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Price/Seat</span>
+                        <span class="detail-value">₹${Number(show.price).toFixed(2)}</span>
+                    </div>
+                    ${show.type === 'doctor' ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Doctor</span>
+                            <span class="detail-value">${escapeHtml(show.doctorName)}</span>
+                        </div>
+                    ` : ''}
+                    ${show.type === 'bus' ? `
+                        <div class="detail-row">
+                            <span class="detail-label">Route</span>
+                            <span class="detail-value">${escapeHtml(show.busRoute)}</span>
+                        </div>
+                    ` : ''}
+                    <div class="price-section">
+                        <div class="detail-row">
+                            <span class="detail-label">Selected Seats</span>
+                            <span class="detail-value" id="seatCountDisplay">0</span>
+                        </div>
+                        <div class="total-price">
+                            <span>Total</span>
+                            <span id="totalPriceDisplay">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Reset any previous selections in UI
+            updatePrice();
+            switchView('booking');
+            // ensure seat elements are focusable and reflect current state
+            renderSeatStatesJustInCase();
+        }
+
+        // ensures seat DOM states reflect the show seat statuses (useful when multiple tabs/updates)
+        function renderSeatStatesJustInCase() {
+            const show = state.shows.find(s => s.id === parseInt(window.currentShowId || 0));
+            if (!show) return;
+            const grid = document.getElementById('seatGrid');
+            if (!grid) return;
+            show.seats.forEach(seat => {
+                const el = grid.querySelector(`[data-seat-id="${seat.id}"]`);
+                if (!el) return;
+                el.classList.remove('available', 'booked', 'selected');
+                if (seat.status === 'available') el.classList.add('available');
+                else el.classList.add('booked');
+            });
+        }
+
+        // Toggle Seat - event aware (so we can prevent toggling booked seats)
+        function toggleSeat(event, seatId) {
+            const el = event.currentTarget || event.target;
+            if (!el) return;
+            if (el.classList.contains('booked')) return; // cannot toggle booked
+            el.classList.toggle('selected');
+            updatePrice();
+        }
+
+        // Update Price & Selected Seats UI
+        function updatePrice() {
+            const selectedElements = document.querySelectorAll('.seat.selected');
+            const show = state.shows.find(s => s.id === parseInt(window.currentShowId || 0));
+            if (!show) return;
+
+            const seatCount = selectedElements.length;
+            const totalPrice = seatCount * show.price;
+
+            const seatCountDisplay = document.getElementById('seatCountDisplay');
+            const totalPriceDisplay = document.getElementById('totalPriceDisplay');
+            if (seatCountDisplay) seatCountDisplay.textContent = seatCount;
+            if (totalPriceDisplay) totalPriceDisplay.textContent = '₹' + totalPrice.toFixed(2);
+
+            const container = document.getElementById('selectedSeatsContainer');
+            const list = document.getElementById('selectedSeatsList');
+
+            if (!container || !list) return;
+            if (seatCount === 0) {
+                container.style.display = 'none';
+                list.innerHTML = '';
+                return;
+            }
+
+            container.style.display = 'block';
+            container.classList.add('active');
+            const seats = Array.from(selectedElements).map(el => el.textContent.trim());
+            list.innerHTML = seats.map(seat => `
+                <div class="seat-tag">
+                    Seat ${seat}
+                    <span class="seat-tag-remove" onclick="deselectSeat(${seat})">✕</span>
+                </div>
+            `).join('');
+        }
+
+        // Deselect Seat by number
+        function deselectSeat(seatNumber) {
+            const seatElement = document.querySelector(`[data-seat-id="${seatNumber}"]`);
+            if (seatElement) {
+                seatElement.classList.remove('selected');
+                updatePrice();
+            }
+        }
+
+        // Confirm Booking
+        function confirmBooking(showId) {
+            const show = state.shows.find(s => s.id === showId);
+            if (!show) return;
+            window.currentShowId = showId;
+
+            if (show.type !== 'doctor') {
+                const selectedSeats = Array.from(document.querySelectorAll('.seat.selected'))
+                    .map(el => parseInt(el.textContent.trim()));
+
+                if (selectedSeats.length === 0) {
+                    alert('⚠️ Please select at least one seat');
+                    return;
+                }
+
+                // Mark seats booked in state
+                selectedSeats.forEach(seatNumber => {
+                    const seat = show.seats.find(s => s.id === seatNumber);
+                    if (seat && seat.status === 'available') {
+                        seat.status = 'booked';
+                        if (show.availableSeats > 0) show.availableSeats--;
+                    }
+                });
+            } else {
+                // Doctor appointment: check patient details
+                const patientName = document.getElementById('patientName')?.value.trim() || '';
+                const patientContact = document.getElementById('patientContact')?.value.trim() || '';
+                if (!patientName) { alert('⚠️ Please enter patient name'); return; }
+                if (!patientContact) { alert('⚠️ Please enter contact number'); return; }
+
+                if (show.availableSeats <= 0) {
+                    alert('⚠️ No slots available');
+                    return;
+                }
+                show.availableSeats--;
+                // attach patient info to booking
+                var patientInfo = { name: patientName, contact: patientContact };
+            }
+
+            const finalSelectedSeats = show.type === 'doctor' ? [1] : Array.from(document.querySelectorAll('.seat.selected')).map(el => parseInt(el.textContent.trim()));
+            const totalPrice = finalSelectedSeats.length * show.price;
+
+            const booking = {
+                id: 'TKT' + Date.now(),
+                showId,
+                showName: show.name,
+                showType: show.type,
+                seats: finalSelectedSeats,
+                price: show.price,
+                totalPrice,
+                status: 'CONFIRMED',
+                bookedAt: new Date().toISOString(),
+                doctorName: show.doctorName || '',
+                busRoute: show.busRoute || '',
+                patient: patientInfo || null
+            };
+
+            // Save booking and show updates
+            state.bookings.push(booking);
+            saveState();
+
+            // Refresh UI
+            renderAdminShows();
+            renderUserShows();
+
+            // Generate ticket UI
+            generateTicket(booking, show);
+        }
+
+        // Generate Ticket UI
+        function generateTicket(booking, show) {
+            const ticketContent = document.getElementById('ticketContent');
+
+            // Compose extra details depending on type
+            let extraHtml = '';
+            if (booking.showType === 'doctor') {
+                extraHtml = `
+                    <div class="ticket-row">
+                        <span class="ticket-label">Doctor</span>
+                        <span class="ticket-value">${escapeHtml(booking.doctorName || '—')}</span>
+                    </div>
+                    ${booking.patient ? `
+                        <div class="ticket-row">
+                            <span class="ticket-label">Patient</span>
+                            <span class="ticket-value">${escapeHtml(booking.patient.name)}</span>
+                        </div>
+                        <div class="ticket-row">
+                            <span class="ticket-label">Contact</span>
+                            <span class="ticket-value">${escapeHtml(booking.patient.contact)}</span>
+                        </div>
+                    ` : ''} 
+                `;
+            } else if (booking.showType === 'bus') {
+                extraHtml = `
+                    <div class="ticket-row">
+                        <span class="ticket-label">Route</span>
+                        <span class="ticket-value">${escapeHtml(booking.busRoute || '—')}</span>
+                    </div>
+                `;
+            } else {
+                extraHtml = '';
+            }
+
+            ticketContent.innerHTML = `
+                <div class="ticket-header">
+                    <div class="ticket-title">🎫 Booking Confirmed!</div>
+                    <div class="ticket-subtitle">Your ticket is ready</div>
+                </div>
+                <div class="ticket-content">
+                    <div class="ticket-id">
+                        <div class="ticket-id-label">Booking ID</div>
+                        <div class="ticket-id-value">${booking.id}</div>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="ticket-label">Show Name</span>
+                        <span class="ticket-value">${escapeHtml(booking.showName)}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="ticket-label">Date & Time</span>
+                        <span class="ticket-value">${new Date(show.time).toLocaleString()}</span>
+                    </div>
+                    <div class="ticket-row">
+                        <span class="ticket-label">Show Type</span>
+                        <span class="ticket-value" style="text-transform: capitalize;">${escapeHtml(booking.showType)}</span>
+                    </div>
+                    ${booking.showType !== 'doctor' ? `
+                        <div class="ticket-seats">
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem;">SEATS</div>
+                            <div class="ticket-seats-list">${booking.seats.join(', ')}</div>
+                        </div>
+                    ` : ''}
+                    ${extraHtml}
+                    <div class="ticket-price">
+                        <div style="font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 0.5rem;">TOTAL AMOUNT</div>
+                        <div class="ticket-total">₹${Number(booking.totalPrice).toFixed(2)}</div>
+                    </div>
+                    <div class="ticket-qr">
+                        <div class="ticket-qr-placeholder">🔐</div>
+                        <div style="font-size: 12px; color: #6B7280; margin-top: 0.5rem;">Secure Booking</div>
+                    </div>
+                </div>
+                <div class="ticket-buttons">
+                    <button class="btn btn-primary" onclick="downloadTicket('${booking.id}', '${escapeJsString(booking.showName)}', '${booking.totalPrice}', '${booking.seats.join(', ')}')">📥 Download</button>
+                    <button class="btn btn-secondary" onclick="shareTicket('${booking.id}')">📤 Share</button>
+                </div>
+            `;
+
+            document.getElementById('ticketModal').classList.add('show');
+        }
+
+        // Download Ticket (canvas)
+        function downloadTicket(bookingId, showName, totalPrice, seats) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+
+            // White background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Title
+            ctx.fillStyle = '#1F2937';
+            ctx.font = 'bold 44px Arial';
+            ctx.fillText('🎫 BOOKING TICKET', 60, 110);
+
+            ctx.font = 'bold 32px Arial';
+            ctx.fillText('Show: ' + showName, 60, 200);
+
+            ctx.font = '20px Arial';
+            ctx.fillText('Booking ID: ' + bookingId, 60, 280);
+            ctx.fillText('Seats: ' + seats, 60, 330);
+            ctx.fillText('Total: ₹' + totalPrice, 60, 380);
+            ctx.fillText('Date: ' + new Date().toLocaleString(), 60, 430);
+
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL('image/png');
+            link.download = `ticket_${bookingId}.png`;
+            link.click();
+        }
+
+        // Share Ticket fallback
+        function shareTicket(bookingId) {
+            const text = `I just booked a ticket! Booking ID: ${bookingId}`;
+            if (navigator.share) {
+                navigator.share({ title: 'Ticket Booking', text }).catch(() => {
+                    alert('Booking ID: ' + bookingId + '\n\nShare this with others!');
+                });
+            } else {
+                alert('Booking ID: ' + bookingId + '\n\nShare this with others!');
+            }
+        }
+
+        // Close Ticket
+        function closeTicket() {
+            document.getElementById('ticketModal').classList.remove('show');
+            backToUserView();
+        }
+
+        // Switch View
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewName + '-view').classList.add('active');
+            state.currentView = viewName;
+
+            if (viewName === 'admin') renderAdminShows();
+            else if (viewName === 'user') renderUserShows();
+        }
+
+        // Back to User View
+        function backToUserView() {
+            switchView('user');
+        }
+
+        // Save State to localStorage
+        function saveState() {
+            localStorage.setItem('shows', JSON.stringify(state.shows));
+            localStorage.setItem('bookings', JSON.stringify(state.bookings));
+            localStorage.setItem('nextShowId', state.nextId.toString());
+        }
+
+        // Basic HTML escape (for safer rendering in table/list)
+        function escapeHtml(str) {
+            if (!str && str !== 0) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Escape JS string content for inline onclick args (simple)
+        function escapeJsString(str) {
+            if (!str && str !== 0) return '';
+            return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\"/g, '\\\"');
+        }
+
+        // Initialize app on load
+        window.addEventListener('load', () => {
+            renderAdminShows();
+            renderUserShows();
+        });
+    </script>
+</body>
+</html>
